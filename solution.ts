@@ -7,17 +7,14 @@ var islandPerimeter = function (grid: number[][]): number {
     for (let j = 0; j < grid[i].length; j++) {
       if (grid[i][j] === 1) stack.push([i, j]);
 
-      while (stack.length > 0) {
-        const [i, j] = stack.pop();
-        islandPerim = markIslandPieces(i, j, grid, islandPerim, stack);
-      }
+      islandPerim = getIslandPerimeter(stack, islandPerim, grid);
     }
   }
 
   return islandPerim;
 };
 
-const markIslandPieces = (i: number, j: number, grid: number[][], islandPerim: number, stack: number[][]): number => {
+const markIslandPiece = (i: number, j: number, grid: number[][], islandPerim: number, stack: number[][]): number => {
   if (grid[i][j] === 2) return islandPerim;
   if (grid[i][j] === 0) return ++islandPerim;
 
@@ -34,6 +31,15 @@ const markIslandPieces = (i: number, j: number, grid: number[][], islandPerim: n
 
   if (j - 1 >= 0) stack.push([i, j - 1]);
   else islandPerim++;
+
+  return islandPerim;
+}
+
+function getIslandPerimeter(stack: number[][], islandPerim: number, grid: number[][]) {
+  while (stack.length > 0) {
+    const [i, j] = stack.pop();
+    islandPerim = markIslandPiece(i, j, grid, islandPerim, stack);
+  }
 
   return islandPerim;
 }
