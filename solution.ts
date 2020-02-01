@@ -3,11 +3,13 @@ var islandPerimeter = function (grid: number[][]): number {
   let islandPerim = 0;
   let stack: number[][] = [];
 
-  for (let i = 0; i < grid.length; i++) {
-    for (let j = 0; j < grid[i].length; j++) {
-      if (grid[i][j] === 1) stack.push([i, j]);
+  const gridWithBorder = addBorderTo2DArray(grid);
 
-      islandPerim = getIslandPerimeter(stack, islandPerim, grid);
+  for (let i = 1; i < gridWithBorder.length - 1; i++) {
+    for (let j = 1; j < gridWithBorder[i].length - 1; j++) {
+      if (gridWithBorder[i][j] === 1) stack.push([i, j]);
+
+      islandPerim = getIslandPerimeter(stack, islandPerim, gridWithBorder);
     }
   }
 
@@ -20,17 +22,10 @@ const markIslandPiece = (i: number, j: number, grid: number[][], islandPerim: nu
 
   grid[i][j] = 2;
 
-  if (i - 1 >= 0) stack.push([i - 1, j]);
-  else islandPerim++;
-
-  if (j + 1 < grid[i].length) stack.push([i, j + 1]);
-  else islandPerim++;
-
-  if (i + 1 < grid.length) stack.push([i + 1, j]);
-  else islandPerim++;
-
-  if (j - 1 >= 0) stack.push([i, j - 1]);
-  else islandPerim++;
+  stack.push([i - 1, j]);
+  stack.push([i, j + 1]);
+  stack.push([i + 1, j]);
+  stack.push([i, j - 1]);
 
   return islandPerim;
 }
@@ -43,6 +38,26 @@ function getIslandPerimeter(stack: number[][], islandPerim: number, grid: number
 
   return islandPerim;
 }
+
+const addBorderTo2DArray = (grid) => {
+  if (grid.length === 0 || grid[0].length === 0) return grid;
+
+  const newGrid = [...grid];
+
+  const topRow = new Array(grid[0].length).fill(0);
+  const bottomRow = [...topRow];
+
+  newGrid.unshift(topRow);
+  newGrid.push(bottomRow);
+
+  const gridWithBorder = newGrid.map((row) => {
+    row.unshift(0);
+    row.push(0);
+    return row;
+  });
+
+  return gridWithBorder;
+};
 
 //----- tests -----
 const island: number[][] = [
